@@ -13,26 +13,14 @@ struct VoiceCoinRechargeProduct: Identifiable, Equatable {
 }
 
 enum VoiceCoinRechargeCatalog {
-//    static let all: [VoiceCoinRechargeProduct] = [
-//        VoiceCoinRechargeProduct(id: "tlqfhnbnyykqjgbk", coinAmount: 400, fallbackPrice: "$0.99"),
-//        VoiceCoinRechargeProduct(id: "jrargtnmceopagmw", coinAmount: 800, fallbackPrice: "$1.99"),
-//        VoiceCoinRechargeProduct(id: "zqvnykmpjdrxtbca", coinAmount: 2190, fallbackPrice: "$3.99"),
-//        VoiceCoinRechargeProduct(id: "xbgodczxvtkaanvo", coinAmount: 2450, fallbackPrice: "$4.99"),
-//        VoiceCoinRechargeProduct(id: "nwdkpfvuyqjzrmhc", coinAmount: 3950, fallbackPrice: "$8.99"),
-//        VoiceCoinRechargeProduct(id: "feagylrrbbywjkfv", coinAmount: 5150, fallbackPrice: "$9.99"),
-//        VoiceCoinRechargeProduct(id: "mqzndbwpklavyeft", coinAmount: 5700, fallbackPrice: "$14.99"),
-//        VoiceCoinRechargeProduct(id: "atpyvfkvzahgtedd", coinAmount: 10800, fallbackPrice: "$19.99"),
-//        VoiceCoinRechargeProduct(id: "ptamrfaqrvojtfpx", coinAmount: 29400, fallbackPrice: "$49.99"),
-//        VoiceCoinRechargeProduct(id: "wxswjcemjyhfampj", coinAmount: 63700, fallbackPrice: "$99.99")
-//    ]
     static let all: [VoiceCoinRechargeProduct] = [
-        VoiceCoinRechargeProduct(id: "lvbsvhxcgcrvesor", coinAmount: 400, fallbackPrice: "$0.99"),
-        VoiceCoinRechargeProduct(id: "dxismgcwewhrtezo", coinAmount: 800, fallbackPrice: "$1.99"),
-        VoiceCoinRechargeProduct(id: "khtxlcejaxmqcsra", coinAmount: 2190, fallbackPrice: "$3.99"),
-        VoiceCoinRechargeProduct(id: "yadwwvxspgxwlndb", coinAmount: 2450, fallbackPrice: "$4.99"),
-        VoiceCoinRechargeProduct(id: "nwdkpfvuyqjzrmhc", coinAmount: 3950, fallbackPrice: "$8.99"),
+        VoiceCoinRechargeProduct(id: "tlqfhnbnyykqjgbk", coinAmount: 400, fallbackPrice: "$0.99"),
+        VoiceCoinRechargeProduct(id: "jrargtnmceopagmw", coinAmount: 800, fallbackPrice: "$1.99"),
+        VoiceCoinRechargeProduct(id: "zqvnykmpjdrxtbca", coinAmount: 2190, fallbackPrice: "$3.99"),
+        VoiceCoinRechargeProduct(id: "xbgodczxvtkaanvo", coinAmount: 2450, fallbackPrice: "$4.99"),
+        VoiceCoinRechargeProduct(id: "nwdkpfvuyqjzrmhc", coinAmount: 3950, fallbackPrice: "$7.99"),
         VoiceCoinRechargeProduct(id: "feagylrrbbywjkfv", coinAmount: 5150, fallbackPrice: "$9.99"),
-        VoiceCoinRechargeProduct(id: "mqzndbwpklavyeft", coinAmount: 5700, fallbackPrice: "$14.99"),
+        VoiceCoinRechargeProduct(id: "mqzndbwpklavyeft", coinAmount: 7700, fallbackPrice: "$14.99"),
         VoiceCoinRechargeProduct(id: "atpyvfkvzahgtedd", coinAmount: 10800, fallbackPrice: "$19.99"),
         VoiceCoinRechargeProduct(id: "ptamrfaqrvojtfpx", coinAmount: 29400, fallbackPrice: "$49.99"),
         VoiceCoinRechargeProduct(id: "wxswjcemjyhfampj", coinAmount: 63700, fallbackPrice: "$99.99")

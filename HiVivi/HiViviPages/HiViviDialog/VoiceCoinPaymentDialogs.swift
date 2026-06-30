@@ -29,6 +29,7 @@ struct VoiceCoinInsufficientDialog: View {
                 message: "Sorry, your account balance is insufficient. Please go to recharge.",
                 cardBackgroundHeight: 400,
                 innerCardHeight: 219,
+                sureTitle: "Recharge",
                 onCancel: onCancel,
                 onSure: onSure
             )
@@ -86,6 +87,7 @@ private struct VoiceCoinPurchaseCard: View {
     let message: String
     let cardBackgroundHeight: CGFloat
     let innerCardHeight: CGFloat
+    var sureTitle = "Sure"
     let onCancel: () -> Void
     let onSure: () -> Void
 
@@ -104,6 +106,7 @@ private struct VoiceCoinPurchaseCard: View {
             VoiceCoinDialogInnerCard(
                 message: message,
                 cardHeight: innerCardHeight,
+                sureTitle: sureTitle,
                 onCancel: onCancel,
                 onSure: onSure
             )
@@ -132,6 +135,7 @@ private struct VoiceCoinPurchaseCard: View {
 private struct VoiceCoinDialogInnerCard: View {
     let message: String
     let cardHeight: CGFloat
+    let sureTitle: String
     let onCancel: () -> Void
     let onSure: () -> Void
 
@@ -156,7 +160,7 @@ private struct VoiceCoinDialogInnerCard: View {
             .buttonStyle(PlainButtonStyle())
 
             Button(action: onSure) {
-                Text("Sure")
+                Text(sureTitle)
                     .font(VoiceWhisperFontKit.bold(18))
                     .foregroundColor(.white)
                     .frame(width: 122, height: 32)

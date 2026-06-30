@@ -54,6 +54,7 @@ struct SonicEchoEULAPage: View {
                         VStack(spacing: 0) {
                             ScrollView(showsIndicators: false) {
                                 Text(SonicEchoLicenseCopy.eulaText)
+                                    .tracking(-0.4)
                                     .font(VoiceWhisperFontKit.regular(16))
                                     .foregroundColor(.white)
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -163,59 +164,53 @@ struct SonicEchoEULAPage: View {
 
 private enum SonicEchoLicenseCopy {
     static let eulaText = """
-This End User License Agreement (EULA) governs your use of the Nomi Application (the "App"). By downloading, accessing or using the App, you agree to be bound by this Agreement. If you do not agree, you may not use the App.
+This End User License Agreement ("Agreement") applies to your use of the HiVivi application ("App"), which provides AI voice changing and instant messaging services. By downloading, accessing or using the App, you accept and agree to this Agreement. If you do not agree, you must not use the App.
 
-1. Qualifications
+1. Eligibility
 
-By using the App, you confirm that you are at least 18 years of age. You agree to provide true and accurate age information. If you are under 18, you are prohibited from using the App.
+You must be at least 18 years old to use HiVivi. You agree to provide truthful and accurate age information. Users under the age of 18 are strictly prohibited from accessing or using the App's features.
 
-2. User Generated Content
+2. User Content Rules
 
-This App allows users to post, share and view street dance-related video content (including supporting text and pictures). By posting content ("User Content") on the App, you agree to the following:
+You may post and share text, voice messages, AI-modified voice audio and related content ("User Content") on HiVivi.
 
 2.1 Prohibited Content
 
-You may not post offensive, harmful, inappropriate or illegal content, including but not limited to:
+You agree not to upload or distribute content that is illegal, abusive, harmful, offensive or inappropriate, including:
 
-- Hate speech, abuse, harassment, threats or personal attacks;
-- Pornographic, explicit or vulgar content;
-- Content promoting violence, discrimination, illegal activities or infringing others' rights;
-- Content irrelevant to street dance, violating public order and good customs, or used for unauthorized advertising;
-- False or misleading information.
+- Hate speech, harassment, threats, insults or personal attacks;
+- Pornographic, vulgar or sexually explicit material;
+- Content promoting violence, discrimination or illegal activities;
+- Fake voice impersonation for fraud, harassment or infringement;
+- False, misleading information or unauthorized commercial advertising.
 
-2.2 Content Licensing
+2.2 Content License
 
-You retain ownership of your User Content, but by posting it, you grant Funksy a non-exclusive, royalty-free license to use, distribute, display and promote such content within the App and its related services.
+You retain ownership of your User Content. You hereby grant HiVivi a free, non-exclusive, perpetual license to use, display, distribute and optimize your User Content within the App for service operation and feature improvement.
 
-3. Reporting and Response Mechanism
+3. Reporting & Enforcement
 
-3.1 Your Responsibilities
-
-If you find content violating this EULA, report it immediately via the App's reporting mechanism.
-
-3.2 Our Response
-
-We will review reported content within 24 hours and take appropriate measures (e.g., removing content, warning or banning users). Repeated violations may result in permanent account suspension.
+You may report violating content through the App's built-in reporting tool. We will review reports within 24 hours and take actions including content removal, warnings, temporary restrictions or permanent account suspension for repeated violations.
 
 4. Privacy Policy
 
-By using the App, you acknowledge having read and agreed to our [Privacy Policy], which details how we collect, use and protect your personal information.
+Your use of HiVivi is subject to our Privacy Policy. By using the App, you acknowledge that you have read and agreed to how we collect and protect your personal data, chat records and voice data.
 
-5. Termination
+5. Account Termination
 
-We may terminate or suspend your access to the App at any time, with or without notice. You may stop using the App and delete your account at any time.
+We reserve the right to suspend or terminate your account at any time, with or without notice, for violations or operational reasons. You may stop using the App and delete your account at any time.
 
-6. Modification of the Agreement
+6. Agreement Updates
 
-We may amend this Agreement at any time. Changes will be announced in the App; your continued use constitutes acceptance of revised terms.
+We may revise this Agreement from time to time. Updated terms will be posted in the App. Continued use of the App after updates constitutes acceptance of the revised Agreement.
 
 7. Disclaimer
 
-The App is provided "AS IS" without any warranties. We do not guarantee it will be uninterrupted, error-free or secure, nor the accuracy of its content.
+The App is provided on an "as is" and "as available" basis. We do not guarantee uninterrupted, error-free or secure service, nor the accuracy of user-generated content.
 
-8. Limitation of Liability
+8. Liability Limitation
 
-To the fullest extent permitted by law, we are not liable for any damages arising from your use of the App or its content.
+To the maximum extent permitted by applicable law, HiVivi shall not be liable for any direct or indirect damages arising from your use of the App.
 """
 }
 

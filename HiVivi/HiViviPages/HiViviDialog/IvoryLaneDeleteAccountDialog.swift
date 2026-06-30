@@ -87,11 +87,12 @@ private struct IvoryLaneDeleteInnerCard: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Text("After deletion, all\ndata will be cleared.\nThis operation is\nirreversible. Please\nchoose carefully.")
+            Text("After deletion, all data will be cleared. This operation is irreversible. Please choose carefully.")
+                .tracking(-0.4)
                 .font(VoiceWhisperFontKit.regular(15))
                 .foregroundColor(.black)
                 .multilineTextAlignment(.center)
-                .lineSpacing(9)
+                .lineSpacing(5)
                 .padding(.top, 25)
 
             Button(action: onCancel) {

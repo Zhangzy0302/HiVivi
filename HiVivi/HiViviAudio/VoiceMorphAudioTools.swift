@@ -8,6 +8,35 @@ struct VoiceMorphAudioConfig: Equatable {
     var voiceMorphNoiseReduction: Double
     var voiceMorphEmotion: Double
     var voiceMorphReverb: String
+    var voiceMorphDistortionPreset: AVAudioUnitDistortionPreset?
+    var voiceMorphDistortionWetDryMix: Float
+    var voiceMorphDelayTime: TimeInterval
+    var voiceMorphDelayFeedback: Float
+    var voiceMorphDelayWetDryMix: Float
+
+    init(
+        voiceMorphPitch: Double,
+        voiceMorphSpeed: Double,
+        voiceMorphNoiseReduction: Double,
+        voiceMorphEmotion: Double,
+        voiceMorphReverb: String,
+        voiceMorphDistortionPreset: AVAudioUnitDistortionPreset? = nil,
+        voiceMorphDistortionWetDryMix: Float = 0,
+        voiceMorphDelayTime: TimeInterval = 0,
+        voiceMorphDelayFeedback: Float = 0,
+        voiceMorphDelayWetDryMix: Float = 0
+    ) {
+        self.voiceMorphPitch = voiceMorphPitch
+        self.voiceMorphSpeed = voiceMorphSpeed
+        self.voiceMorphNoiseReduction = voiceMorphNoiseReduction
+        self.voiceMorphEmotion = voiceMorphEmotion
+        self.voiceMorphReverb = voiceMorphReverb
+        self.voiceMorphDistortionPreset = voiceMorphDistortionPreset
+        self.voiceMorphDistortionWetDryMix = voiceMorphDistortionWetDryMix
+        self.voiceMorphDelayTime = voiceMorphDelayTime
+        self.voiceMorphDelayFeedback = voiceMorphDelayFeedback
+        self.voiceMorphDelayWetDryMix = voiceMorphDelayWetDryMix
+    }
 
     var voiceMorphPitchCents: Float {
         Float((voiceMorphPitch - 0.5) * 2400)
@@ -20,15 +49,15 @@ struct VoiceMorphAudioConfig: Equatable {
     var voiceMorphReverbWetDryMix: Float {
         switch voiceMorphReverb {
         case "KTV":
-            return 42
+            return 14
         case "Room":
-            return 24
+            return 8
         case "Ethereal":
-            return 58
+            return 16
         case "Concert":
-            return 50
+            return 18
         default:
-            return 28
+            return 10
         }
     }
 
@@ -146,6 +175,8 @@ enum VoiceMorphAudioProcessor {
         let voicePlayer = AVAudioPlayerNode()
         let voicePitch = AVAudioUnitTimePitch()
         let voiceEQ = AVAudioUnitEQ(numberOfBands: 2)
+        let voiceDistortion = AVAudioUnitDistortion()
+        let voiceDelay = AVAudioUnitDelay()
         let voiceReverb = AVAudioUnitReverb()
 
         voicePitch.pitch = voiceConfig.voiceMorphPitchCents
@@ -162,6 +193,17 @@ enum VoiceMorphAudioProcessor {
         voiceEmotionBand.frequency = 3_200
         voiceEmotionBand.bypass = false
         voiceEmotionBand.gain = voiceConfig.voiceMorphEmotionHighGain
+
+        if let voiceDistortionPreset = voiceConfig.voiceMorphDistortionPreset {
+            voiceDistortion.loadFactoryPreset(voiceDistortionPreset)
+            voiceDistortion.wetDryMix = voiceConfig.voiceMorphDistortionWetDryMix
+        } else {
+            voiceDistortion.wetDryMix = 0
+        }
+
+        voiceDelay.delayTime = voiceConfig.voiceMorphDelayTime
+        voiceDelay.feedback = voiceConfig.voiceMorphDelayFeedback
+        voiceDelay.wetDryMix = voiceConfig.voiceMorphDelayWetDryMix
 
         switch voiceConfig.voiceMorphReverb {
         case "KTV":
@@ -180,11 +222,15 @@ enum VoiceMorphAudioProcessor {
         voiceEngine.attach(voicePlayer)
         voiceEngine.attach(voicePitch)
         voiceEngine.attach(voiceEQ)
+        voiceEngine.attach(voiceDistortion)
+        voiceEngine.attach(voiceDelay)
         voiceEngine.attach(voiceReverb)
 
         voiceEngine.connect(voicePlayer, to: voicePitch, format: voiceSourceFormat)
         voiceEngine.connect(voicePitch, to: voiceEQ, format: voiceSourceFormat)
-        voiceEngine.connect(voiceEQ, to: voiceReverb, format: voiceSourceFormat)
+        voiceEngine.connect(voiceEQ, to: voiceDistortion, format: voiceSourceFormat)
+        voiceEngine.connect(voiceDistortion, to: voiceDelay, format: voiceSourceFormat)
+        voiceEngine.connect(voiceDelay, to: voiceReverb, format: voiceSourceFormat)
         voiceEngine.connect(voiceReverb, to: voiceEngine.mainMixerNode, format: voiceSourceFormat)
 
         let voiceMaxFrames: AVAudioFrameCount = 4_096

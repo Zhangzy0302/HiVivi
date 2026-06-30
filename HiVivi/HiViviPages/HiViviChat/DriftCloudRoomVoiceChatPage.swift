@@ -315,10 +315,60 @@ struct DriftCloudRoomVoiceChatPage: View {
             return
         }
 
+        guard let driftCloudSelectedVoice = driftCloudRoomSelectedVoiceOption else {
+            driftCloudRoomPersistVoiceMessage(
+                fileURL: voiceURL,
+                duration: driftCloudVoiceDuration,
+                senderID: driftCloudCurrentUserID,
+                roomID: driftCloudRoomData.opalBridgeRoomID
+            )
+            return
+        }
+
+        PrismTrailPulseToastLoadingCenter.shared.showLoading("Processing...", showsMask: false)
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                let driftCloudProcessedURL = try VoiceMorphAudioProcessor.voiceMorphRenderProcessedFile(
+                    sourceURL: voiceURL,
+                    config: driftCloudSelectedVoice.audioConfig
+                )
+                let driftCloudProcessedDuration = driftCloudRoomVoiceDuration(from: driftCloudProcessedURL)
+                try? FileManager.default.removeItem(at: voiceURL)
+
+                DispatchQueue.main.async {
+                    PrismTrailPulseToastLoadingCenter.shared.hideLoading()
+                    driftCloudRoomPersistVoiceMessage(
+                        fileURL: driftCloudProcessedURL,
+                        duration: driftCloudProcessedDuration > 0 ? driftCloudProcessedDuration : driftCloudVoiceDuration,
+                        senderID: driftCloudCurrentUserID,
+                        roomID: driftCloudRoomData.opalBridgeRoomID
+                    )
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    PrismTrailPulseToastLoadingCenter.shared.hideLoading()
+                    PrismTrailPulseToastLoadingCenter.shared.showToast(error.localizedDescription, kind: .error)
+                    driftCloudRoomPersistVoiceMessage(
+                        fileURL: voiceURL,
+                        duration: driftCloudVoiceDuration,
+                        senderID: driftCloudCurrentUserID,
+                        roomID: driftCloudRoomData.opalBridgeRoomID
+                    )
+                }
+            }
+        }
+    }
+
+    private func driftCloudRoomPersistVoiceMessage(
+        fileURL voiceURL: URL,
+        duration driftCloudVoiceDuration: TimeInterval,
+        senderID driftCloudCurrentUserID: String,
+        roomID driftCloudRoomID: String
+    ) {
         let driftCloudSentAt = Date()
         let whisperMessage = WhisperMessageData(
             whisperMessageID: "whisper_message_\(UUID().uuidString)",
-            whisperRoomID: driftCloudRoomData.opalBridgeRoomID,
+            whisperRoomID: driftCloudRoomID,
             whisperSenderID: driftCloudCurrentUserID,
             whisperTextMessage: "",
             whisperVoiceFilePath: voiceURL.path,
@@ -327,7 +377,7 @@ struct DriftCloudRoomVoiceChatPage: View {
         )
 
         WhisperMessageStore.create(whisperMessage)
-        OpalBridgeRoomChatStore.update(id: driftCloudRoomData.opalBridgeRoomID) { driftCloudRoom in
+        OpalBridgeRoomChatStore.update(id: driftCloudRoomID) { driftCloudRoom in
             driftCloudRoom.opalBridgeRoomLastMessageSentAt = driftCloudSentAt
             driftCloudRoom.opalBridgeRoomLastSenderID = driftCloudCurrentUserID
             driftCloudRoom.opalBridgeRoomLastMessageText = "[Voice]"
