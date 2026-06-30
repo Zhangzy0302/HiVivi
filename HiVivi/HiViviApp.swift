@@ -1,17 +1,24 @@
-//
-//  HiViviApp.swift
-//  HiVivi
-//
-//  Created by yangyang on 2026/6/15.
-//
 
 import SwiftUI
 
 @main
 struct HiViviApp: App {
+    init() {
+        VoiceWhisperFontKit.registerFonts()
+        SonicSeedDataBootstrap.initializeLocalDataIfNeeded()
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationView {
+                AmberStoneMaskGuideAuthPage()
+                    .navigationBarHidden(true)
+                    .voiceNativeSwipeBackEnabled()
+            }
+            .navigationViewStyle(StackNavigationViewStyle())
+            .environment(\.font, VoiceWhisperFontKit.regular(14))
+            .prismTrailPulseToastLoadingOverlay()
+            .lunarCoveGuestLimitOverlay()
         }
     }
 }
