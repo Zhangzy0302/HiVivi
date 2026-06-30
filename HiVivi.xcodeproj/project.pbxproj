@@ -10,9 +10,22 @@
 		DD2735902FE00BFE00753038 /* HiVivi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HiVivi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DD2735A02FE00C0000753038 /* Exceptions for "HiVivi" folder in "HiVivi" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = DD27358F2FE00BFE00753038 /* HiVivi */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		DD2735922FE00BFE00753038 /* HiVivi */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DD2735A02FE00C0000753038 /* Exceptions for "HiVivi" folder in "HiVivi" target */,
+			);
 			path = HiVivi;
 			sourceTree = "<group>";
 		};
@@ -253,14 +266,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HiVivi/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to your camera for shooting so that you can upload videos or photos. Captured media saves locally and will only be uploaded with your approval.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to obtain your location information to provide you with a more personalized user experience. Location data is private and only used with your authorization.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app requires microphone access to record audio, with the aim of enabling you to have voice chats. Audio is only recorded with your consent and stays stored locally on your device.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app needs to access your album so that you can select and upload avatars or other pictures and videos from it. Selected media stays local and shared only if you permit.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -292,14 +306,15 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = HiVivi/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "This app requires access to your camera for shooting so that you can upload videos or photos. Captured media saves locally and will only be uploaded with your approval.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app needs to obtain your location information to provide you with a more personalized user experience. Location data is private and only used with your authorization.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "This app requires microphone access to record audio, with the aim of enabling you to have voice chats. Audio is only recorded with your consent and stays stored locally on your device.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This app needs to access your album so that you can select and upload avatars or other pictures and videos from it. Selected media stays local and shared only if you permit.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
