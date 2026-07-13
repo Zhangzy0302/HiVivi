@@ -137,7 +137,7 @@ platform :ios do
     update_code_signing_settings(
       path: "HiVivi.xcodeproj",
       use_automatic_signing: false,
-      team_id: "C4C3S4F9MU",
+      team_id: "JGW4FR3YJV",
       targets: ["HiVivi"],
       code_sign_identity: "Apple Distribution",
       profile_name: "match AppStore com.HiviViahbs.HiVivi",
