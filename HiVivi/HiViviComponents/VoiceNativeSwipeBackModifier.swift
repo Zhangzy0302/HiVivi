@@ -15,6 +15,11 @@ struct VoiceNativeSwipeBackEnabler: UIViewControllerRepresentable {
                 return
             }
 
+            if voiceNavigationController.interactivePopGestureRecognizer?.delegate
+                is VoiceNativeSwipeBackDisabler.Coordinator {
+                return
+            }
+
             voiceNavigationController.interactivePopGestureRecognizer?.isEnabled = true
             context.coordinator.voiceNavigationController = voiceNavigationController
             voiceNavigationController.interactivePopGestureRecognizer?.delegate = context.coordinator
@@ -34,6 +39,71 @@ struct VoiceNativeSwipeBackEnabler: UIViewControllerRepresentable {
     }
 }
 
+struct VoiceNativeSwipeBackDisabler: UIViewControllerRepresentable {
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    func makeUIViewController(context: Context) -> UIViewController {
+        UIViewController()
+    }
+
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        DispatchQueue.main.async {
+            guard let voiceNavigationController = uiViewController.voiceNearestNavigationController,
+                  let voicePopGesture = voiceNavigationController.interactivePopGestureRecognizer else {
+                return
+            }
+
+            context.coordinator.voiceInstallIfNeeded(
+                navigationController: voiceNavigationController,
+                gestureRecognizer: voicePopGesture
+            )
+            voicePopGesture.delegate = context.coordinator
+            voicePopGesture.isEnabled = false
+        }
+    }
+
+    static func dismantleUIViewController(_ uiViewController: UIViewController, coordinator: Coordinator) {
+        coordinator.voiceRestoreGesture()
+    }
+
+    final class Coordinator: NSObject, UIGestureRecognizerDelegate {
+        weak var voiceNavigationController: UINavigationController?
+        weak var voicePreviousDelegate: UIGestureRecognizerDelegate?
+        private var voicePreviousIsEnabled = true
+
+        func voiceInstallIfNeeded(
+            navigationController: UINavigationController,
+            gestureRecognizer: UIGestureRecognizer
+        ) {
+            guard voiceNavigationController !== navigationController else {
+                return
+            }
+            voiceRestoreGesture()
+            voiceNavigationController = navigationController
+            voicePreviousDelegate = gestureRecognizer.delegate
+            voicePreviousIsEnabled = gestureRecognizer.isEnabled
+        }
+
+        func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+            false
+        }
+
+        func voiceRestoreGesture() {
+            guard let voicePopGesture = voiceNavigationController?.interactivePopGestureRecognizer else {
+                return
+            }
+            if voicePopGesture.delegate === self {
+                voicePopGesture.delegate = voicePreviousDelegate
+            }
+            voicePopGesture.isEnabled = voicePreviousIsEnabled
+            voiceNavigationController = nil
+            voicePreviousDelegate = nil
+        }
+    }
+}
+
 private struct VoiceNativeSwipeBackModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -44,6 +114,10 @@ private struct VoiceNativeSwipeBackModifier: ViewModifier {
 extension View {
     func voiceNativeSwipeBackEnabled() -> some View {
         modifier(VoiceNativeSwipeBackModifier())
+    }
+
+    func voiceNativeSwipeBackDisabled() -> some View {
+        background(VoiceNativeSwipeBackDisabler().frame(width: 0, height: 0))
     }
 
     func voiceEdgeSwipeBack(onBack: @escaping () -> Void) -> some View {

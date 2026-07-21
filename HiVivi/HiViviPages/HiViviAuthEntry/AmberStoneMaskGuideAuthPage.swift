@@ -1,6 +1,9 @@
 import SwiftUI
+import UIKit
 
 struct AmberStoneMaskGuideAuthPage: View {
+    @StateObject private var amberStoneMaskBInitViewModel = SableCipherInitViewModel()
+    @ObservedObject private var amberStoneMaskLocationManager = ZephyrRuneLocationManager.shared
     @State private var silverGardenSessionShowsHome = SilverGardenSessionLoginStore.hasCurrentUser
     @State private var amberStoneMaskShowsEmailAuth = false
     @State private var amberStoneMaskEmailAuthMode: BlueRiverMorphAuthMode = .signIn
@@ -10,6 +13,10 @@ struct AmberStoneMaskGuideAuthPage: View {
     @State private var amberStoneMaskPendingAuthMode: BlueRiverMorphAuthMode?
     @State private var amberStoneMaskPendingGuestLogin = false
     @State private var amberStoneMaskShouldContinueAfterEULA = false
+    @State private var amberStoneMaskDidStartBInit = false
+    @State private var amberStoneMaskDidOpenInitialBRoute = false
+    @State private var amberStoneMaskIsPreparingQuickLogin = false
+    @State private var amberStoneMaskShowsBWeb = false
 
     private let toneShiftHorizontalInset: CGFloat = 54
     private let nobleSpringSurfUserAgreementAddress = "https://app.u5mmdj3g.link/users"
@@ -28,8 +35,27 @@ struct AmberStoneMaskGuideAuthPage: View {
                 .voiceNativeSwipeBackEnabled()
             } else {
                 ZStack {
-                    amberStoneMaskGuideContent
+                    switch amberStoneMaskBInitViewModel.sableCipherStatus {
+                    case .sableCipherLoading:
+                        amberStoneMaskBLoadingContent
+                    case .sableCipherA:
+                        amberStoneMaskGuideContent
+                    case .sableCipherB:
+                        amberStoneMaskBPackageContent
+                    }
+
                     amberStoneMaskNavigationLinks
+
+                    if amberStoneMaskLocationManager.zephyrRuneShowLocationDialog {
+                        UmberGlyphLocationPermissionDialog(
+                            umberGlyphDismissAction: {
+                                amberStoneMaskLocationManager.zephyrRuneShowLocationDialog = false
+                            },
+                            umberGlyphOpenSettingsAction: amberStoneMaskOpenLocationSettings
+                        )
+                        .transition(.opacity)
+                        .zIndex(10)
+                    }
                 }
             }
         }
@@ -37,6 +63,7 @@ struct AmberStoneMaskGuideAuthPage: View {
         .voiceNativeSwipeBackEnabled()
         .onAppear {
             NobleSpringSurfWebPreheater.warmUp()
+            amberStoneMaskStartBInitIfNeeded()
         }
         .onReceive(NotificationCenter.default.publisher(for: .lunarCoveGuestLimitDidRequestLogin)) { _ in
             silverGardenSessionShowsHome = false
@@ -56,6 +83,90 @@ struct AmberStoneMaskGuideAuthPage: View {
                 amberStoneMaskPendingGuestLogin = false
             }
         }
+        .animation(.easeInOut(duration: 0.24), value: amberStoneMaskLocationManager.zephyrRuneShowLocationDialog)
+    }
+
+    private var amberStoneMaskBLoadingContent: some View {
+        GeometryReader { amberStoneMaskProxy in
+            VoiceWhisperGuideBackdrop()
+
+            VStack(spacing: 14) {
+                Image("HIVV_app_logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 88, height: 88)
+                    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    .padding(.bottom, 12)
+
+                ProgressView()
+                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                    .scaleEffect(1.08)
+
+                Text("Loading...")
+                    .font(VoiceWhisperFontKit.regular(13))
+                    .foregroundColor(.white.opacity(0.76))
+            }
+            .frame(width: 150, height: 190)
+            .position(
+                x: amberStoneMaskProxy.size.width / 2,
+                y: amberStoneMaskProxy.size.height * 0.58
+            )
+        }
+        .ignoresSafeArea()
+    }
+
+    private var amberStoneMaskBPackageContent: some View {
+        GeometryReader { amberStoneMaskProxy in
+            let amberStoneMaskIsSmallScreen = amberStoneMaskProxy.size.height < 720
+            let amberStoneMaskLogoSize = min(111, amberStoneMaskProxy.size.width * 0.3)
+            let amberStoneMaskButtonWidth = min(
+                250,
+                amberStoneMaskProxy.size.width - toneShiftHorizontalInset * 2
+            )
+
+            VoiceWhisperGuideBackdrop()
+
+            Image("HIVV_app_logo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: amberStoneMaskLogoSize, height: amberStoneMaskLogoSize)
+                .clipShape(RoundedRectangle(cornerRadius: 30, style: .continuous))
+                .position(
+                    x: amberStoneMaskProxy.size.width / 2,
+                    y: amberStoneMaskProxy.size.height / 2
+                )
+
+            VStack(spacing: 0) {
+                Spacer(minLength: 0)
+
+                Button(action: amberStoneMaskHandleQuickLogin) {
+                    Group {
+                        if amberStoneMaskIsPreparingQuickLogin {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: .black))
+                        } else {
+                            Text("Quick Login")
+                                .font(VoiceWhisperFontKit.bold(16))
+                                .foregroundColor(.black)
+                        }
+                    }
+                    .frame(
+                        width: amberStoneMaskButtonWidth,
+                        height: amberStoneMaskIsSmallScreen ? 52 : 54
+                    )
+                    .background(Color(red: 0.54, green: 1, blue: 0.43))
+                    .clipShape(Capsule())
+                }
+                .buttonStyle(PlainButtonStyle())
+                .disabled(amberStoneMaskIsPreparingQuickLogin)
+                .opacity(amberStoneMaskIsPreparingQuickLogin ? 0.72 : 1)
+
+                Spacer()
+                    .frame(height: amberStoneMaskProxy.safeAreaInsets.bottom + (amberStoneMaskIsSmallScreen ? 48 : 72))
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .ignoresSafeArea()
     }
 
     private var amberStoneMaskGuideContent: some View {
@@ -185,6 +296,10 @@ struct AmberStoneMaskGuideAuthPage: View {
                 destination: NobleSpringSurfWebPage(
                     nobleSpringSurfWebAddress: nobleSpringSurfGuideWebAddress ?? nobleSpringSurfUserAgreementAddress,
                     onBack: {
+                        if amberStoneMaskShowsBWeb {
+                            NacreWispBInfoStore.shared.nacreWispClearSession()
+                        }
+                        amberStoneMaskShowsBWeb = false
                         nobleSpringSurfGuideWebAddress = nil
                     }
                 )
@@ -196,6 +311,7 @@ struct AmberStoneMaskGuideAuthPage: View {
                     },
                     set: { isActive in
                         if !isActive {
+                            amberStoneMaskShowsBWeb = false
                             nobleSpringSurfGuideWebAddress = nil
                         }
                     }
@@ -217,6 +333,74 @@ struct AmberStoneMaskGuideAuthPage: View {
 
     private func amberStoneMaskOpenPrivacyPolicy() {
         nobleSpringSurfGuideWebAddress = nobleSpringSurfPrivacyPolicyAddress
+    }
+
+    private func amberStoneMaskStartBInitIfNeeded() {
+        guard amberStoneMaskDidStartBInit == false else { return }
+        amberStoneMaskDidStartBInit = true
+
+        guard SilverGardenSessionLoginStore.hasCurrentUser == false else {
+            amberStoneMaskBInitViewModel.sableCipherStatus = .sableCipherA
+            return
+        }
+
+        Task { @MainActor in
+            await amberStoneMaskBInitViewModel.sableCipherInitFlow()
+            amberStoneMaskOpenInitialBRouteIfNeeded()
+        }
+    }
+
+    private func amberStoneMaskOpenInitialBRouteIfNeeded() {
+        guard amberStoneMaskDidOpenInitialBRoute == false,
+              let amberStoneMaskRoute = amberStoneMaskBInitViewModel.sableCipherNextRoute else {
+            return
+        }
+
+        amberStoneMaskDidOpenInitialBRoute = true
+        amberStoneMaskOpenBRoute(amberStoneMaskRoute, showsFailureToast: false)
+    }
+
+    private func amberStoneMaskHandleQuickLogin() {
+        guard amberStoneMaskIsPreparingQuickLogin == false else { return }
+        amberStoneMaskIsPreparingQuickLogin = true
+        PrismTrailPulseToastLoadingCenter.shared.showLoading("Logging in...", showsMask: true)
+
+        Task { @MainActor in
+            let amberStoneMaskRoute: SableCipherBRoute?
+            if let amberStoneMaskNextRoute = amberStoneMaskBInitViewModel.sableCipherNextRoute {
+                amberStoneMaskRoute = amberStoneMaskNextRoute
+            } else {
+                amberStoneMaskRoute = await SableCipherInitUtils.shared.sableCipherGoLogin()
+            }
+
+            PrismTrailPulseToastLoadingCenter.shared.hideLoading()
+            amberStoneMaskIsPreparingQuickLogin = false
+            amberStoneMaskOpenBRoute(amberStoneMaskRoute, showsFailureToast: true)
+        }
+    }
+
+    private func amberStoneMaskOpenBRoute(
+        _ amberStoneMaskRoute: SableCipherBRoute?,
+        showsFailureToast amberStoneMaskShowsFailureToast: Bool
+    ) {
+        guard case let .some(.sableCipherAgreement(sableCipherURL: amberStoneMaskURL)) = amberStoneMaskRoute,
+              amberStoneMaskURL.isEmpty == false else {
+            if amberStoneMaskShowsFailureToast {
+                PrismTrailPulseToastLoadingCenter.shared.showToast(
+                    "Login failed. Please try again.",
+                    kind: .error
+                )
+            }
+            return
+        }
+
+        amberStoneMaskShowsBWeb = true
+        nobleSpringSurfGuideWebAddress = amberStoneMaskURL
+    }
+
+    private func amberStoneMaskOpenLocationSettings() {
+        amberStoneMaskLocationManager.zephyrRuneShowLocationDialog = false
+        UmberGlyphLocationPermissionDialog.umberGlyphOpenAppSettings()
     }
 
     private func amberStoneMaskLoginByEmail() {
@@ -351,7 +535,7 @@ struct AmberStoneMaskGuideAuthPage: View {
     }
 }
 
-private struct VoiceWhisperGuideBackdrop: View {
+struct VoiceWhisperGuideBackdrop: View {
     var body: some View {
         Image("HIVV_main_bg")
             .resizable()

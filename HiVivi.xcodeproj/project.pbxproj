@@ -6,6 +6,15 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		1712D3813008C81800BCD36A /* AdjustSdk in Frameworks */ = {isa = PBXBuildFile; productRef = 1712D3803008C81800BCD36A /* AdjustSdk */; };
+		1712D3843008C87A00BCD36A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 1712D3833008C87A00BCD36A /* Alamofire */; };
+		179983B03009CEB0005150F8 /* FacebookAEM in Frameworks */ = {isa = PBXBuildFile; productRef = 179983AF3009CEB0005150F8 /* FacebookAEM */; };
+		179983B23009CEB0005150F8 /* FacebookBasics in Frameworks */ = {isa = PBXBuildFile; productRef = 179983B13009CEB0005150F8 /* FacebookBasics */; };
+		179983B43009CEB0005150F8 /* FacebookCore in Frameworks */ = {isa = PBXBuildFile; productRef = 179983B33009CEB0005150F8 /* FacebookCore */; };
+		179983B73009D2DD005150F8 /* ScreenShield in Frameworks */ = {isa = PBXBuildFile; productRef = 179983B63009D2DD005150F8 /* ScreenShield */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		DD2735902FE00BFE00753038 /* HiVivi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HiVivi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +45,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				179983B03009CEB0005150F8 /* FacebookAEM in Frameworks */,
+				179983B43009CEB0005150F8 /* FacebookCore in Frameworks */,
+				179983B23009CEB0005150F8 /* FacebookBasics in Frameworks */,
+				1712D3813008C81800BCD36A /* AdjustSdk in Frameworks */,
+				1712D3843008C87A00BCD36A /* Alamofire in Frameworks */,
+				179983B73009D2DD005150F8 /* ScreenShield in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +93,12 @@
 			);
 			name = HiVivi;
 			packageProductDependencies = (
+				1712D3803008C81800BCD36A /* AdjustSdk */,
+				1712D3833008C87A00BCD36A /* Alamofire */,
+				179983AF3009CEB0005150F8 /* FacebookAEM */,
+				179983B13009CEB0005150F8 /* FacebookBasics */,
+				179983B33009CEB0005150F8 /* FacebookCore */,
+				179983B63009D2DD005150F8 /* ScreenShield */,
 			);
 			productName = HiVivi;
 			productReference = DD2735902FE00BFE00753038 /* HiVivi.app */;
@@ -107,6 +128,12 @@
 			);
 			mainGroup = DD2735872FE00BFE00753038;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				1712D37F3008C81800BCD36A /* XCRemoteSwiftPackageReference "ios_sdk" */,
+				1712D3823008C87A00BCD36A /* XCRemoteSwiftPackageReference "Alamofire" */,
+				179983AE3009CEB0005150F8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				179983B53009D2DD005150F8 /* XCRemoteSwiftPackageReference "ScreenShield" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = DD2735912FE00BFE00753038 /* Products */;
 			projectDirPath = "";
@@ -260,10 +287,12 @@
 		DD27359C2FE00C0000753038 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APS_ENVIRONMENT = development;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HiVivi/HiVivi.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -282,7 +311,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.HiviViahbs.HiVivi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -300,10 +329,12 @@
 		DD27359D2FE00C0000753038 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				APS_ENVIRONMENT = production;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = HiVivi/HiVivi.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -322,7 +353,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 1.1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.HiviViahbs.HiVivi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -359,6 +390,74 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1712D37F3008C81800BCD36A /* XCRemoteSwiftPackageReference "ios_sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adjust/ios_sdk";
+			requirement = {
+				kind = revision;
+				revision = ff8a74823dc020b09f08b670735e24ccbcb5095a;
+			};
+		};
+		1712D3823008C87A00BCD36A /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.12.0;
+			};
+		};
+		179983AE3009CEB0005150F8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/facebook/facebook-ios-sdk";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+		179983B53009D2DD005150F8 /* XCRemoteSwiftPackageReference "ScreenShield" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/JayantBadlani/ScreenShield";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1712D3803008C81800BCD36A /* AdjustSdk */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1712D37F3008C81800BCD36A /* XCRemoteSwiftPackageReference "ios_sdk" */;
+			productName = AdjustSdk;
+		};
+		1712D3833008C87A00BCD36A /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1712D3823008C87A00BCD36A /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		179983AF3009CEB0005150F8 /* FacebookAEM */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 179983AE3009CEB0005150F8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookAEM;
+		};
+		179983B13009CEB0005150F8 /* FacebookBasics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 179983AE3009CEB0005150F8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookBasics;
+		};
+		179983B33009CEB0005150F8 /* FacebookCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 179983AE3009CEB0005150F8 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */;
+			productName = FacebookCore;
+		};
+		179983B63009D2DD005150F8 /* ScreenShield */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 179983B53009D2DD005150F8 /* XCRemoteSwiftPackageReference "ScreenShield" */;
+			productName = ScreenShield;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DD2735882FE00BFE00753038 /* Project object */;
 }

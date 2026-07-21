@@ -22,6 +22,7 @@ struct DriftCloudRoomVoiceChatPage: View {
     @State private var driftCloudRoomSelectedVoiceOption: VoiceMorphAIVoicePreset?
     @State private var driftCloudRoomVoiceSelectorExpanded = false
     @State private var driftCloudRoomShowsAssistant = false
+    @State private var driftCloudRoomShowsVideoCall = false
     @StateObject private var driftCloudRoomVoiceRecorder = VoiceMorphAudioRecorder()
     @FocusState private var driftCloudRoomWhisperInputFocused: Bool
 
@@ -67,6 +68,10 @@ struct DriftCloudRoomVoiceChatPage: View {
                     OpalBridgeRoomChatHeader(
                         otherUser: driftCloudRoomOtherUser,
                         onBack: onBack,
+                        onVideoCallTap: {
+                            driftCloudRoomWhisperInputFocused = false
+                            driftCloudRoomShowsVideoCall = true
+                        },
                         onMoreTap: {
                             driftCloudRoomWhisperInputFocused = false
                             guard !isGuestUser else {
@@ -133,6 +138,21 @@ struct DriftCloudRoomVoiceChatPage: View {
                     .navigationBarHidden(true)
                     .voiceNativeSwipeBackEnabled(),
                     isActive: $driftCloudRoomShowsAssistant
+                ) {
+                    EmptyView()
+                }
+                .hidden()
+
+                NavigationLink(
+                    destination: DriftCloudVideoCallingPage(
+                        otherUser: driftCloudRoomOtherUser,
+                        onBack: {
+                            driftCloudRoomShowsVideoCall = false
+                        }
+                    )
+                    .navigationBarHidden(true)
+                    .voiceNativeSwipeBackEnabled(),
+                    isActive: $driftCloudRoomShowsVideoCall
                 ) {
                     EmptyView()
                 }
@@ -413,6 +433,7 @@ struct DriftCloudRoomVoiceChatPage: View {
 private struct OpalBridgeRoomChatHeader: View {
     let otherUser: VoiceUserProfileData?
     let onBack: () -> Void
+    let onVideoCallTap: () -> Void
     let onMoreTap: () -> Void
 
     var body: some View {
@@ -435,6 +456,16 @@ private struct OpalBridgeRoomChatHeader: View {
             Text(otherUser?.voiceUserName ?? "Chat")
                 .font(VoiceWhisperFontKit.bold(18))
                 .foregroundColor(.white)
+                .lineLimit(1)
+
+            Button(action: onVideoCallTap) {
+                Image("HIVV_icon_video_call")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 29, height: 29)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
 
             Spacer()
 
