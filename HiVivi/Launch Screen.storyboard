@@ -16,13 +16,18 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="HIVV_launch_page" translatesAutoresizingMaskIntoConstraints="NO" id="a0M-NH-npl">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="HIVV_launch_page" translatesAutoresizingMaskIntoConstraints="NO" id="a0M-NH-npl">
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.10980392156862745" green="0.10980392156862745" blue="0.13725490196078433" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="a0M-NH-npl" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="5Dt-UF-89R"/>
+                            <constraint firstAttribute="trailing" secondItem="a0M-NH-npl" secondAttribute="trailing" id="ASa-mA-jZc"/>
+                            <constraint firstItem="a0M-NH-npl" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="GkJ-mt-65A"/>
+                            <constraint firstAttribute="bottom" secondItem="a0M-NH-npl" secondAttribute="bottom" id="zUd-YK-w8H"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>

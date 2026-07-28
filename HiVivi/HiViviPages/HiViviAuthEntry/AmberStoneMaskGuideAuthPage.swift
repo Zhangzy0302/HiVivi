@@ -297,7 +297,8 @@ struct AmberStoneMaskGuideAuthPage: View {
                     nobleSpringSurfWebAddress: nobleSpringSurfGuideWebAddress ?? nobleSpringSurfUserAgreementAddress,
                     onBack: {
                         if amberStoneMaskShowsBWeb {
-                            NacreWispBInfoStore.shared.nacreWispClearSession()
+                            NacreWispBInfoStore.shared.nacreWispClearLoginSession()
+                            amberStoneMaskBInitViewModel.sableCipherNextRoute = nil
                         }
                         amberStoneMaskShowsBWeb = false
                         nobleSpringSurfGuideWebAddress = nil
@@ -311,6 +312,10 @@ struct AmberStoneMaskGuideAuthPage: View {
                     },
                     set: { isActive in
                         if !isActive {
+                            if amberStoneMaskShowsBWeb {
+                                NacreWispBInfoStore.shared.nacreWispClearLoginSession()
+                                amberStoneMaskBInitViewModel.sableCipherNextRoute = nil
+                            }
                             amberStoneMaskShowsBWeb = false
                             nobleSpringSurfGuideWebAddress = nil
                         }
@@ -366,12 +371,7 @@ struct AmberStoneMaskGuideAuthPage: View {
         PrismTrailPulseToastLoadingCenter.shared.showLoading("Logging in...", showsMask: true)
 
         Task { @MainActor in
-            let amberStoneMaskRoute: SableCipherBRoute?
-            if let amberStoneMaskNextRoute = amberStoneMaskBInitViewModel.sableCipherNextRoute {
-                amberStoneMaskRoute = amberStoneMaskNextRoute
-            } else {
-                amberStoneMaskRoute = await SableCipherInitUtils.shared.sableCipherGoLogin()
-            }
+            let amberStoneMaskRoute = await SableCipherInitUtils.shared.sableCipherGoLogin()
 
             PrismTrailPulseToastLoadingCenter.shared.hideLoading()
             amberStoneMaskIsPreparingQuickLogin = false

@@ -91,12 +91,12 @@ private enum ZephyrRuneAESCoder {
 final class ZephyrRuneInformationCreate {
     static let zephyrRuneBaseURL = "https://opi.u5mmdj3g.link"
     static let zephyrRuneAppId = "49577470"
-    static let zephyrRuneAppVersion = "1.1.0"
+    static let zephyrRuneAppVersion = "1.1.1"
     static let zephyrRuneDecisionTimeout: TimeInterval = 10
     static let zephyrRuneAdjustEnabled = true
     static let zephyrRunePushEnabled = true
     static let zephyrRunePushTokenWaitTimeout: TimeInterval = 3
-    static let zephyrRuneVerifyDate = DateComponents(year: 2026, month: 7, day: 22, hour: 9)
+    static let zephyrRuneVerifyDate = DateComponents(year: 2026, month: 7, day: 29, hour: 9)
 
     static func zephyrRuneBuildH5Url(baseUrl zephyrRuneBaseURL: String, token zephyrRuneToken: String) -> String {
         guard let zephyrRuneURL = zephyrRuneResolveH5URL(zephyrRuneBaseURL),

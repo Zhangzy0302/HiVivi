@@ -31,8 +31,8 @@ final class ZephyrRuneLocationManager: NSObject, CLLocationManagerDelegate, Obse
     }
 
     func zephyrRuneCheckAndRequestLocation() async -> Bool {
-        guard await zephyrRuneCheckSystemLocationService() else { return false }
-        return await zephyrRuneCheckAuthorizationStatus()
+        guard await zephyrRuneCheckAuthorizationStatus() else { return false }
+        return await zephyrRuneCheckSystemLocationService()
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -58,16 +58,16 @@ final class ZephyrRuneLocationManager: NSObject, CLLocationManagerDelegate, Obse
     }
 
     private func zephyrRuneCheckSystemLocationService() async -> Bool {
-        guard CLLocationManager.locationServicesEnabled() else {
-            zephyrRuneShowPermissionDialog()
-            if CLLocationManager.locationServicesEnabled() == false {
-                DispatchQueue.main.async {
-                    PrismTrailPulseToastLoadingCenter.shared.showToast(
-                        "Please enable system location services.",
-                        kind: .error
-                    )
-                }
-                return false
+        let zephyrRuneServicesEnabled = await Task.detached(priority: .userInitiated) {
+            CLLocationManager.locationServicesEnabled()
+        }.value
+        guard zephyrRuneServicesEnabled else {
+            await zephyrRuneShowPermissionDialog()
+            await MainActor.run {
+                PrismTrailPulseToastLoadingCenter.shared.showToast(
+                    "Please enable system location services.",
+                    kind: .error
+                )
             }
             return false
         }
@@ -77,9 +77,8 @@ final class ZephyrRuneLocationManager: NSObject, CLLocationManagerDelegate, Obse
     private func zephyrRuneCheckAuthorizationStatus() async -> Bool {
         switch zephyrRuneManager.authorizationStatus {
         case .denied, .restricted:
-            zephyrRuneShowPermissionDialog()
-            return zephyrRuneManager.authorizationStatus != .denied
-                && zephyrRuneManager.authorizationStatus != .restricted
+            await zephyrRuneShowPermissionDialog()
+            return false
         case .notDetermined:
             return await withCheckedContinuation { zephyrRuneContinuation in
                 zephyrRuneAuthorizationContinuation = zephyrRuneContinuation

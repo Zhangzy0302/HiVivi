@@ -89,7 +89,6 @@ struct ObsidianSereinProtectedWebPage: View {
     }
 
     private func obsidianSereinCloseRequested() {
-        NacreWispBInfoStore.shared.nacreWispClearSession()
         obsidianSereinCloseAction()
     }
 }
@@ -162,7 +161,7 @@ private final class ObsidianSereinWebState: ObservableObject {
 
     @Published var obsidianSereinIsLoading = true
     @Published var obsidianSereinError: String?
-    private var obsidianSereinActivePurchaseID: String?
+    private var obsidianSereinActivePurchaseToken: UUID?
 
     init(obsidianSereinAddress: String) {
         obsidianSereinURL = ZephyrRuneInformationCreate.zephyrRuneResolveH5URL(obsidianSereinAddress)
@@ -173,7 +172,7 @@ private final class ObsidianSereinWebState: ObservableObject {
     }
 
     func obsidianSereinDeactivate() {
-        obsidianSereinFinishPurchase(requestID: nil)
+        obsidianSereinFinishPurchase()
     }
 
     func obsidianSereinLoadingStarted() {
@@ -201,11 +200,10 @@ private final class ObsidianSereinWebState: ObservableObject {
     }
 
     func obsidianSereinPurchaseRequested(_ obsidianSereinRequest: VirelaiGloamingPurchaseRequest) {
-        guard obsidianSereinActivePurchaseID == nil else {
+        guard obsidianSereinActivePurchaseToken == nil else {
             obsidianSereinBridge.virelaiGloamingEmit(
                 event: "nativeRechargeState",
                 detail: [
-                    "requestId": obsidianSereinRequest.virelaiGloamingRequestID,
                     "state": "pending",
                     "coins": 0
                 ]
@@ -213,20 +211,20 @@ private final class ObsidianSereinWebState: ObservableObject {
             return
         }
 
-        obsidianSereinActivePurchaseID = obsidianSereinRequest.virelaiGloamingRequestID
+        let obsidianSereinPurchaseToken = UUID()
+        obsidianSereinActivePurchaseToken = obsidianSereinPurchaseToken
         PrismTrailPulseToastLoadingCenter.shared.showLoading("Processing payment...", showsMask: true)
         VoiceCoinStoreKitOneCenter.shared.voiceCoinPurchaseForBPackage(
             productID: obsidianSereinRequest.virelaiGloamingProductID,
             orderCode: obsidianSereinRequest.virelaiGloamingOrderCode
         ) { [weak self] obsidianSereinResult in
             guard let self,
-                  self.obsidianSereinActivePurchaseID == obsidianSereinRequest.virelaiGloamingRequestID else {
+                  self.obsidianSereinActivePurchaseToken == obsidianSereinPurchaseToken else {
                 return
             }
-            self.obsidianSereinFinishPurchase(requestID: obsidianSereinRequest.virelaiGloamingRequestID)
+            self.obsidianSereinFinishPurchase(token: obsidianSereinPurchaseToken)
 
             var obsidianSereinDetail: [String: Any] = [
-                "requestId": obsidianSereinRequest.virelaiGloamingRequestID,
                 "coins": 0
             ]
             switch obsidianSereinResult {
@@ -240,6 +238,10 @@ private final class ObsidianSereinWebState: ObservableObject {
             case .failed(let obsidianSereinMessage):
                 obsidianSereinDetail["state"] = "failed"
                 obsidianSereinDetail["error"] = obsidianSereinMessage
+                PrismTrailPulseToastLoadingCenter.shared.showToast(
+                    obsidianSereinMessage,
+                    kind: .error
+                )
             }
             self.obsidianSereinBridge.virelaiGloamingEmit(
                 event: "nativeRechargeState",
@@ -270,18 +272,24 @@ private final class ObsidianSereinWebState: ObservableObject {
         }
     }
 
-    func obsidianSereinInvalidMessage(requestID: String?, action: String) {
+    func obsidianSereinInvalidMessage(action: String) {
         let obsidianSereinEvent = action == "openBrowser" ? "nativeOpenState" : "nativeRechargeState"
+        if obsidianSereinEvent == "nativeRechargeState" {
+            PrismTrailPulseToastLoadingCenter.shared.showToast(
+                "Recharge product not found.",
+                kind: .error
+            )
+        }
         obsidianSereinBridge.virelaiGloamingEmit(
             event: obsidianSereinEvent,
-            detail: ["requestId": requestID ?? "", "state": "failed", "error": "Invalid request"]
+            detail: ["state": "failed", "error": "Invalid request"]
         )
     }
 
-    private func obsidianSereinFinishPurchase(requestID: String?) {
-        if let requestID, obsidianSereinActivePurchaseID != requestID { return }
-        guard obsidianSereinActivePurchaseID != nil else { return }
-        obsidianSereinActivePurchaseID = nil
+    private func obsidianSereinFinishPurchase(token: UUID? = nil) {
+        if let token, obsidianSereinActivePurchaseToken != token { return }
+        guard obsidianSereinActivePurchaseToken != nil else { return }
+        obsidianSereinActivePurchaseToken = nil
         PrismTrailPulseToastLoadingCenter.shared.hideLoading()
     }
 
@@ -289,13 +297,9 @@ private final class ObsidianSereinWebState: ObservableObject {
         request obsidianSereinRequest: VirelaiGloamingExternalRequest,
         state obsidianSereinState: String
     ) -> [String: Any] {
-        var obsidianSereinDetail: [String: Any] = [
+        [
             "state": obsidianSereinState,
             "url": obsidianSereinRequest.virelaiGloamingURLString
         ]
-        if let obsidianSereinRequestID = obsidianSereinRequest.virelaiGloamingRequestID {
-            obsidianSereinDetail["requestId"] = obsidianSereinRequestID
-        }
-        return obsidianSereinDetail
     }
 }

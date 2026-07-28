@@ -13,13 +13,25 @@ struct VoiceCoinRechargeProduct: Identifiable, Equatable {
 }
 
 enum VoiceCoinRechargeCatalog {
+//    static let all: [VoiceCoinRechargeProduct] = [
+//        VoiceCoinRechargeProduct(id: "tlqfhnbnyykqjgbk", coinAmount: 400, fallbackPrice: "$0.99"),
+//        VoiceCoinRechargeProduct(id: "jrargtnmceopagmw", coinAmount: 800, fallbackPrice: "$1.99"),
+//        VoiceCoinRechargeProduct(id: "zqvnykmpjdrxtbca", coinAmount: 2190, fallbackPrice: "$3.99"),
+//        VoiceCoinRechargeProduct(id: "xbgodczxvtkaanvo", coinAmount: 2450, fallbackPrice: "$4.99"),
+//        VoiceCoinRechargeProduct(id: "nwdkpfvuyqjzrmhc", coinAmount: 3950, fallbackPrice: "$7.99"),
+//        VoiceCoinRechargeProduct(id: "feagylrrbbywjkfv", coinAmount: 5150, fallbackPrice: "$9.99"),
+//        VoiceCoinRechargeProduct(id: "mqzndbwpklavyeft", coinAmount: 7700, fallbackPrice: "$14.99"),
+//        VoiceCoinRechargeProduct(id: "atpyvfkvzahgtedd", coinAmount: 10800, fallbackPrice: "$19.99"),
+//        VoiceCoinRechargeProduct(id: "ptamrfaqrvojtfpx", coinAmount: 29400, fallbackPrice: "$49.99"),
+//        VoiceCoinRechargeProduct(id: "wxswjcemjyhfampj", coinAmount: 63700, fallbackPrice: "$99.99")
+//    ]
     static let all: [VoiceCoinRechargeProduct] = [
-        VoiceCoinRechargeProduct(id: "tlqfhnbnyykqjgbk", coinAmount: 400, fallbackPrice: "$0.99"),
+        VoiceCoinRechargeProduct(id: "lvbsvhxcgcrvesor", coinAmount: 400, fallbackPrice: "$0.99"),
         VoiceCoinRechargeProduct(id: "jrargtnmceopagmw", coinAmount: 800, fallbackPrice: "$1.99"),
         VoiceCoinRechargeProduct(id: "zqvnykmpjdrxtbca", coinAmount: 2190, fallbackPrice: "$3.99"),
-        VoiceCoinRechargeProduct(id: "xbgodczxvtkaanvo", coinAmount: 2450, fallbackPrice: "$4.99"),
+        VoiceCoinRechargeProduct(id: "dxismgcwewhrtezo", coinAmount: 2450, fallbackPrice: "$4.99"),
         VoiceCoinRechargeProduct(id: "nwdkpfvuyqjzrmhc", coinAmount: 3950, fallbackPrice: "$7.99"),
-        VoiceCoinRechargeProduct(id: "feagylrrbbywjkfv", coinAmount: 5150, fallbackPrice: "$9.99"),
+        VoiceCoinRechargeProduct(id: "yadwwvxspgxwlndb", coinAmount: 5150, fallbackPrice: "$9.99"),
         VoiceCoinRechargeProduct(id: "mqzndbwpklavyeft", coinAmount: 7700, fallbackPrice: "$14.99"),
         VoiceCoinRechargeProduct(id: "atpyvfkvzahgtedd", coinAmount: 10800, fallbackPrice: "$19.99"),
         VoiceCoinRechargeProduct(id: "ptamrfaqrvojtfpx", coinAmount: 29400, fallbackPrice: "$49.99"),
@@ -223,6 +235,10 @@ final class VoiceCoinStoreKitOneCenter: NSObject, ObservableObject {
             completion(.failed(message: "Invalid purchase request"))
             return
         }
+        guard VoiceCoinRechargeCatalog.voiceCoinProduct(for: voiceCoinNormalizedProductID) != nil else {
+            completion(.failed(message: "Recharge product not found."))
+            return
+        }
 
         guard SKPaymentQueue.canMakePayments() else {
             completion(.failed(message: "Payments are unavailable"))
@@ -246,14 +262,6 @@ final class VoiceCoinStoreKitOneCenter: NSObject, ObservableObject {
         voiceCoinActiveBProductID = voiceCoinNormalizedProductID
         voiceCoinPurchasingProductID = voiceCoinNormalizedProductID
         voiceCoinBPurchaseCompletions[voiceCoinNormalizedProductID] = completion
-
-        if let voiceProduct = voiceCoinProductsByID[voiceCoinNormalizedProductID] {
-            voiceCoinStartBPackagePayment(
-                product: voiceProduct,
-                orderCode: voiceCoinNormalizedOrderCode
-            )
-            return
-        }
 
         voiceCoinLoadProduct(productID: voiceCoinNormalizedProductID) { [weak self] result in
             guard let self else { return }

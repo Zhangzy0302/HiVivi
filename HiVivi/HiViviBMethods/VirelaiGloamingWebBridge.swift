@@ -54,11 +54,10 @@ struct VirelaiGloamingCallbacks {
     let virelaiGloamingDidRequestClose: () -> Void
     let virelaiGloamingDidRequestPurchase: (VirelaiGloamingPurchaseRequest) -> Void
     let virelaiGloamingDidRequestExternalOpen: (VirelaiGloamingExternalRequest) -> Void
-    let virelaiGloamingDidRejectMessage: (String?, String) -> Void
+    let virelaiGloamingDidRejectMessage: (String) -> Void
 }
 
 struct VirelaiGloamingExternalRequest {
-    let virelaiGloamingRequestID: String?
     let virelaiGloamingURLString: String
 
     init?(virelaiGloamingBody: Any) {
@@ -74,53 +73,34 @@ struct VirelaiGloamingExternalRequest {
             return nil
         }
 
-        let virelaiGloamingCandidateID = (virelaiGloamingDictionary?[
-            VirelaiGloamingASCIICipher.virelaiGloamingReveal("sfrvftuJe")
-        ] as? String)?
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        virelaiGloamingRequestID = virelaiGloamingCandidateID?.isEmpty == false
-            ? virelaiGloamingCandidateID
-            : nil
         virelaiGloamingURLString = virelaiGloamingAddress
     }
 }
 
 struct VirelaiGloamingPurchaseRequest {
-    let virelaiGloamingRequestID: String
     let virelaiGloamingOrderCode: String
     let virelaiGloamingProductID: String
 
     init?(virelaiGloamingBody: Any) {
         guard let virelaiGloamingDictionary = Self.virelaiGloamingDictionary(
             from: virelaiGloamingBody
-        ),
-              let virelaiGloamingOrder = Self.virelaiGloamingText(
+        ) else {
+            return nil
+        }
+
+        guard let virelaiGloamingOrder = Self.virelaiGloamingText(
                 virelaiGloamingDictionary[
                     VirelaiGloamingASCIICipher.virelaiGloamingReveal("psefsDpef")
                 ]
               ),
               let virelaiGloamingProduct = Self.virelaiGloamingText(
                 virelaiGloamingDictionary[
-                    VirelaiGloamingASCIICipher.virelaiGloamingReveal("qspevduJe")
+                    VirelaiGloamingASCIICipher.virelaiGloamingReveal("cbudiOp")
                 ]
-                    ?? virelaiGloamingDictionary[
-                        VirelaiGloamingASCIICipher.virelaiGloamingReveal("qspevduJE")
-                    ]
-                    ?? virelaiGloamingDictionary[
-                        VirelaiGloamingASCIICipher.virelaiGloamingReveal("cbudiOp")
-                    ]
               ) else {
             return nil
         }
 
-        let virelaiGloamingCandidate = Self.virelaiGloamingText(
-            virelaiGloamingDictionary[
-                VirelaiGloamingASCIICipher.virelaiGloamingReveal("sfrvftuJe")
-            ]
-        )
-        virelaiGloamingRequestID = virelaiGloamingCandidate?.isEmpty == false
-            ? virelaiGloamingCandidate!
-            : UUID().uuidString
         virelaiGloamingOrderCode = virelaiGloamingOrder
         virelaiGloamingProductID = virelaiGloamingProduct
     }
@@ -286,10 +266,6 @@ final class VirelaiGloamingCoordinator: NSObject, WKNavigationDelegate, WKScript
         _ userContentController: WKUserContentController,
         didReceive message: WKScriptMessage
     ) {
-        let virelaiGloamingBody = message.body as? [String: Any]
-        let virelaiGloamingRequestID = virelaiGloamingBody?[
-            VirelaiGloamingASCIICipher.virelaiGloamingReveal("sfrvftuJe")
-        ] as? String
         guard let virelaiGloamingAction = VirelaiGloamingAction(rawValue: message.name) else { return }
 
         switch virelaiGloamingAction {
@@ -300,7 +276,6 @@ final class VirelaiGloamingCoordinator: NSObject, WKNavigationDelegate, WKScript
                 virelaiGloamingBody: message.body
             ) else {
                 virelaiGloamingCallbacks.virelaiGloamingDidRejectMessage(
-                    virelaiGloamingRequestID,
                     virelaiGloamingAction.rawValue
                 )
                 return
@@ -311,7 +286,6 @@ final class VirelaiGloamingCoordinator: NSObject, WKNavigationDelegate, WKScript
                 virelaiGloamingBody: message.body
             ) else {
                 virelaiGloamingCallbacks.virelaiGloamingDidRejectMessage(
-                    virelaiGloamingRequestID,
                     virelaiGloamingAction.rawValue
                 )
                 return

@@ -85,6 +85,11 @@ final class NacreWispBInfoStore {
         NacreWispAppStorage.nacreWispIsB = false
     }
 
+    func nacreWispClearLoginSession() {
+        nacreWispPassword = ""
+        NacreWispAppStorage.nacreWispUserToken = ""
+    }
+
     private func nacreWispReadPendingPurchases() -> [NacreWispPendingPurchase] {
         guard let nacreWispText = nacreWispVault.nacreWispRead(.nacreWispPendingPurchases) else {
             return []

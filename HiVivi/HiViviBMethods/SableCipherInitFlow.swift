@@ -90,6 +90,7 @@ final class SableCipherInitUtils {
                 sableCipherShowToast("error")
                 return nil
             }
+            print("Quick login response:", sableCipherResponse)
             guard sableCipherResponse["code"] as? String == "0000" else {
                 sableCipherShowToast("Login Error")
                 return nil
@@ -97,6 +98,7 @@ final class SableCipherInitUtils {
             guard let sableCipherDecision = SableCipherDecision(sableCipherResponse: sableCipherResponse) else {
                 return nil
             }
+            print("Quick login decrypted response:", sableCipherDecision.sableCipherValues)
 
             SableCipherSessionWriter.sableCipherStore(sableCipherDecision.sableCipherValues)
             guard let sableCipherURL = sableCipherAuthenticatedURL() else {

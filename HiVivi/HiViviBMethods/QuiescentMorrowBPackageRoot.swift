@@ -79,9 +79,9 @@ struct QuiescentMorrowBPackageRoot: View {
     }
 
     private func quiescentMorrowCloseBPackage() {
-        NacreWispBInfoStore.shared.nacreWispClearSession()
+        NacreWispBInfoStore.shared.nacreWispClearLoginSession()
         quiescentMorrowCoordinator.sableCipherNextRoute = nil
-        quiescentMorrowCoordinator.sableCipherStatus = .sableCipherA
+        quiescentMorrowCoordinator.sableCipherStatus = .sableCipherB
     }
 }
 
