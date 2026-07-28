@@ -1,0 +1,189 @@
+name: Build and upload to TestFlight
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hivivi-testflight
+  cancel-in-progress: false
+
+jobs:
+  build-and-upload:
+    name: Build HiVivi and upload
+    runs-on: [self-hosted, macOS, ARM64]
+
+    timeout-minutes: 60
+
+    env:
+      LC_ALL: en_US.UTF-8
+      LANG: en_US.UTF-8
+      CI: "true"
+      XCODE_VERSION: "26.2" # 打包使用的 Xcode 版本
+
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_CONTENT: ${{ secrets.ASC_KEY_CONTENT }}
+
+      FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+
+      TEAM_ID: ${{ secrets.TEAM_ID }}
+      BUNDLE_ID: ${{ secrets.BUNDLE_ID }}
+      SCHEME: ${{ secrets.SCHEME }}
+      EXPORT_METHOD: ${{ secrets.EXPORT_METHOD }}
+      APP_NAME: ${{ secrets.APP_NAME }}
+
+      BUNDLE_PATH: vendor/bundle
+      FL_OUTPUT_DIR: build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate build configuration
+        shell: bash
+        run: |
+          required_vars=(
+            XCODE_VERSION
+            ASC_KEY_ID
+            ASC_ISSUER_ID
+            ASC_KEY_CONTENT
+            FASTLANE_USER
+            MATCH_PASSWORD
+            TEAM_ID
+            BUNDLE_ID
+            SCHEME
+            EXPORT_METHOD
+          )
+
+          for name in "${required_vars[@]}"; do
+            if [ -z "${!name}" ]; then
+              echo "::error::$name is missing"
+              exit 1
+            fi
+          done
+
+      - name: Select requested Xcode
+        shell: bash
+        run: |
+          XCODE_APP=""
+
+          while IFS= read -r candidate; do
+            developer_dir="$candidate/Contents/Developer"
+            [ -d "$developer_dir" ] || continue
+
+            version="$(
+              DEVELOPER_DIR="$developer_dir" \
+                xcodebuild -version |
+                awk '/^Xcode / { print $2 }'
+            )"
+
+            if [ "$version" = "$XCODE_VERSION" ]; then
+              XCODE_APP="$candidate"
+              break
+            fi
+          done < <(
+            find /Applications \
+              -maxdepth 1 \
+              -type d \
+              -name "Xcode*.app" \
+              -print
+          )
+
+          if [ -z "$XCODE_APP" ]; then
+            echo "::error::Xcode $XCODE_VERSION is not installed"
+            echo "Installed Xcode applications:"
+            find /Applications \
+              -maxdepth 1 \
+              -type d \
+              -name "Xcode*.app" \
+              -print
+            exit 1
+          fi
+
+          XCODE_PATH="$XCODE_APP/Contents/Developer"
+          echo "DEVELOPER_DIR=$XCODE_PATH" >> "$GITHUB_ENV"
+
+          echo "Selected Xcode: $XCODE_APP"
+          DEVELOPER_DIR="$XCODE_PATH" xcodebuild -version
+          DEVELOPER_DIR="$XCODE_PATH" swift --version
+          DEVELOPER_DIR="$XCODE_PATH" xcrun --sdk iphoneos --show-sdk-version
+
+      - name: Show build environment
+        run: |
+          sw_vers
+          uname -m
+          xcodebuild -version
+          ruby --version
+
+      - name: Configure Git identity
+        shell: bash
+        run: |
+          echo "GIT_AUTHOR_NAME=GitHub Actions" >> "$GITHUB_ENV"
+          echo "GIT_AUTHOR_EMAIL=github-actions@users.noreply.github.com" >> "$GITHUB_ENV"
+          echo "GIT_COMMITTER_NAME=GitHub Actions" >> "$GITHUB_ENV"
+          echo "GIT_COMMITTER_EMAIL=github-actions@users.noreply.github.com" >> "$GITHUB_ENV"
+
+      - name: Configure Match SSH key
+        shell: bash
+        env:
+          MATCH_SSH_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
+        run: |
+          if [ -z "$MATCH_SSH_KEY" ]; then
+            echo "::error::MATCH_GIT_PRIVATE_KEY is missing"
+            exit 1
+          fi
+
+          mkdir -p "$HOME/.ssh"
+          printf '%s\n' "$MATCH_SSH_KEY" > "$HOME/.ssh/hivivi_match_key"
+          chmod 600 "$HOME/.ssh/hivivi_match_key"
+          ssh-keyscan github.com >> "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/known_hosts"
+
+          cat >> "$HOME/.ssh/config" <<'EOF'
+          Host github.com
+            HostName github.com
+            User git
+            IdentityFile ~/.ssh/hivivi_match_key
+            IdentitiesOnly yes
+          EOF
+
+          chmod 600 "$HOME/.ssh/config"
+
+      - name: Configure Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3.6"
+          bundler-cache: true
+
+      - name: Verify Ruby build tools
+        run: |
+          ruby --version
+          bundle --version
+          bundle check
+          bundle exec fastlane --version
+
+      - name: Build and upload to TestFlight
+        run: bundle exec fastlane ios release
+
+      - name: Upload IPA artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: HiVivi-build
+          path: |
+            build/*.ipa
+            build/*.dSYM.zip
+            build/logs/**
+            fastlane/report.xml
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Remove temporary SSH key
+        if: always()
+        shell: bash
+        run: |
+          rm -f "$HOME/.ssh/hivivi_match_key"
